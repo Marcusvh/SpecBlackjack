@@ -1,4 +1,5 @@
-﻿using Blackjack.models;
+﻿using Blackjack.Helpers;
+using Blackjack.models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,10 @@ namespace Blackjack.Managers
 {
     public class GameMaster
     {
+        HGameMaster HGameMaster = new HGameMaster();
         // Tracks each player's cards
         private readonly Dictionary<string, List<Card>> playerCards = new();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GameMaster"/> class with the specified players.
         /// </summary>
@@ -42,24 +45,17 @@ namespace Blackjack.Managers
                 playerCards[player] = new List<Card>();
             }
 
+            HGameMaster.HandleAceValue(player, card, playerCards);
+
             playerCards[player].Add(card);
+            int playerNewSum = playerCards[player].Sum(c => c.Value);
+            int totalScore = playerNewSum;
 
-            int totalScore = playerCards[player].Sum(c => c.Value);
+            Console.WriteLine($"{player} now has {totalScore} point{(totalScore == 1 ? "" : "s")}!\n");
 
-            Console.WriteLine($"Player {player} now has {totalScore} point{(totalScore == 1 ? "" : "s")}!");
-
-            return CheckForBust(player, totalScore);
+            return HGameMaster.CheckForBust(player, totalScore);
         }
 
-        private bool CheckForBust(string player, int totalScore)
-        {
-            bool isBusted = false;
-            if (totalScore > 21)
-            {
-                Console.WriteLine($"{player} has busted!");
-                isBusted = true;
-            }
-            return isBusted;
-        }
+        
     }
 }
