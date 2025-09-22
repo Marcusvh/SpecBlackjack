@@ -9,23 +9,24 @@ namespace Blackjack.Managers
 {
     public class Deck
     {
-        private int DeckSize = 0;
+        private int NumberOfDecks = 0;
+        private int NumberOfCardsInDeck = 52;
         Random random = new();
+        List<Card> deck = new List<Card>();
         /// <summary>
         /// Initializes a new instance of the <see cref="Deck"/> class with the specified size.
         /// </summary>
         /// <param name="numberOfDecks">The number of decks, to be in play. The default value is 1.</param>
         public Deck(int numberOfDecks = 1) 
         {
-            DeckSize = numberOfDecks;
+            NumberOfDecks = numberOfDecks;
         }
 
         public List<Card> GetDeckOfCards()
         {
-            List<Card> deck = new List<Card>();
             int id = 1;
 
-            for (int d = 0; d < DeckSize; d++)
+            for (int d = 0; d < NumberOfDecks; d++)
             {
                 foreach (Card.CardRanks rank in Enum.GetValues(typeof(Card.CardRanks)))
                 {
@@ -44,6 +45,17 @@ namespace Blackjack.Managers
 
             ShuffleDeck(deck);
             return deck;
+        }
+        public Card DealCards()
+        {
+            Card dealtCard = new Card();
+            int cardIndex = random.Next(NumberOfCardsInDeck * NumberOfDecks);
+
+            dealtCard = deck[cardIndex];
+            deck.RemoveAt(cardIndex);
+
+            Console.WriteLine($"Card {dealtCard.Rank} has been dealt to ???");
+            return dealtCard;
         }
 
         // Helper method to assign card values
