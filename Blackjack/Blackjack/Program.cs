@@ -3,9 +3,18 @@ using Blackjack.models;
 
 Console.WriteLine("Welcome to blackjack");
 
-List<string> players = new List<string> { "Player 1"};
+List<string> players = new List<string> { "Player 1" };
 Deck deck = new Deck();
-GameMaster gameMaster = new GameMaster(players);
 deck.GetDeckOfCards();
-Card dealtCards = deck.DealCards();
-gameMaster.UpdateScore("Player 1", dealtCards);
+GameMaster gameMaster = new GameMaster(players);
+
+while (true)
+{
+    Card dealtCards = deck.DealCards(players[0]);
+    bool isBusted = gameMaster.UpdateScore("Player 1", dealtCards);
+    if (isBusted)
+    {
+        gameMaster.EndGame();
+        break;
+    }
+}

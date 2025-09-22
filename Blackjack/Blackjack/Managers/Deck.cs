@@ -46,7 +46,7 @@ namespace Blackjack.Managers
             ShuffleDeck(deck);
             return deck;
         }
-        public Card DealCards()
+        public Card DealCards(string player)
         {
             Card dealtCard = new Card();
             int cardIndex = random.Next(NumberOfCardsInDeck * NumberOfDecks);
@@ -54,7 +54,7 @@ namespace Blackjack.Managers
             dealtCard = deck[cardIndex];
             deck.RemoveAt(cardIndex);
 
-            Console.WriteLine($"Card {dealtCard.Rank} has been dealt to ???");
+            Console.WriteLine($"Card {dealtCard.Rank} has been dealt to {player}");
             return dealtCard;
         }
 

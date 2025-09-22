@@ -35,7 +35,7 @@ namespace Blackjack.Managers
             Console.WriteLine("Game ended!");
         }
 
-        public void UpdateScore(string player, Card card)
+        public bool UpdateScore(string player, Card card)
         {
             if (!playerCards.ContainsKey(player))
             {
@@ -48,16 +48,18 @@ namespace Blackjack.Managers
 
             Console.WriteLine($"Player {player} now has {totalScore} point{(totalScore == 1 ? "" : "s")}!");
 
-            CheckForBust(player, totalScore);
+            return CheckForBust(player, totalScore);
         }
 
-        private void CheckForBust(string player, int totalScore)
+        private bool CheckForBust(string player, int totalScore)
         {
+            bool isBusted = false;
             if (totalScore > 21)
             {
                 Console.WriteLine($"{player} has busted!");
-                EndGame();
+                isBusted = true;
             }
+            return isBusted;
         }
     }
 }
