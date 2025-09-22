@@ -9,12 +9,12 @@ namespace Blackjack.Helpers
 {
     public class HGameMaster
     {
-        public bool CheckForBust(string player, int totalScore)
+        public bool CheckForBust(Player player, int totalScore)
         {
             bool isBusted = false;
             if (totalScore > 21)
             {
-                Console.WriteLine($"{player} has busted!");
+                Console.WriteLine($"{player.Name} has busted!");
                 isBusted = true;
             }
             return isBusted;
@@ -26,7 +26,7 @@ namespace Blackjack.Helpers
                 Console.WriteLine($"{player} has hit blackjack!");
             }
         }
-        public void HandleAceValue(string player, Card card, Dictionary<string, List<Card>> playerCards)
+        public void HandleAceValue(Player player, Card card, Dictionary<Player, List<Card>> playerCards)
         {
             int playerCurrentSum = playerCards[player].Sum(c => c.Value);
             if (card.IsAce && playerCurrentSum + 11 > 21)

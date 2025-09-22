@@ -12,7 +12,7 @@ namespace Blackjack.Managers
     {
         HGameMaster HGameMaster = new HGameMaster();
         // Tracks each player's cards
-        private readonly Dictionary<string, List<Card>> playerCards = new();
+        private readonly Dictionary<Player, List<Card>> playerCards = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameMaster"/> class with the specified players.
@@ -20,9 +20,9 @@ namespace Blackjack.Managers
         /// <remarks>The <paramref name="players"/> parameter must not be null, and each player name in
         /// the list must be unique.</remarks>
         /// <param name="players">A list of player names. Each player will be initialized with an empty hand of cards.</param>
-        public GameMaster(List<string> players)
+        public GameMaster(List<Player> players)
         {
-            foreach (var player in players)
+            foreach (Player player in players)
             {
                 playerCards[player] = new List<Card>();
             }
@@ -31,6 +31,34 @@ namespace Blackjack.Managers
         public void StartGame()
         {
             Console.WriteLine("Game started!");
+            Console.WriteLine("Please enter the name(s) of the player(s)");
+            while (true)
+            {
+                string? input = Console.ReadLine();
+                Player player = new Player { Name = input};
+
+                if (!string.IsNullOrWhiteSpace(input))
+                {
+                    if (input.ToLower() == "done")
+                    {
+                        break;
+                    }
+                    if (!playerCards.ContainsKey(player))
+                    {
+                        playerCards[player] = new List<Card>();
+                        Console.WriteLine($"Player {input} added. Enter another name or type 'done' to finish.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This player name already exists. Please enter a different name, or type 'done' to finish");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid player name or type 'done' to finish.");
+                }
+            }
+
         }
 
         public void EndGame()
@@ -38,7 +66,7 @@ namespace Blackjack.Managers
             Console.WriteLine("Game ended!");
         }
 
-        public bool UpdateScore(string player, Card card)
+        public bool UpdateScore(Player player, Card card)
         {
             if (!playerCards.ContainsKey(player))
             {
@@ -54,8 +82,6 @@ namespace Blackjack.Managers
             Console.WriteLine($"{player} now has {totalScore} point{(totalScore == 1 ? "" : "s")}!\n");
 
             return HGameMaster.CheckForBust(player, totalScore);
-        }
-
-        
+        } 
     }
 }
