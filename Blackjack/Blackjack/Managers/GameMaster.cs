@@ -1,87 +1,76 @@
 ﻿using Blackjack.Helpers;
-using Blackjack.models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blackjack.Managers
 {
     public class GameMaster
     {
-        HGameMaster HGameMaster = new HGameMaster();
-        // Tracks each player's cards
-        private readonly Dictionary<Player, List<Card>> playerCards = new();
+        private DealerManager dealerManager = new DealerManager();
+        private PlayerManager playerManager = new PlayerManager();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GameMaster"/> class with the specified players.
-        /// </summary>
-        /// <remarks>The <paramref name="players"/> parameter must not be null, and each player name in
-        /// the list must be unique.</remarks>
-        /// <param name="players">A list of player names. Each player will be initialized with an empty hand of cards.</param>
-        public GameMaster(List<Player> players)
+        public GameMaster(DealerManager dealer, PlayerManager player)
         {
-            foreach (Player player in players)
-            {
-                playerCards[player] = new List<Card>();
-            }
+            dealerManager = dealer;
+            playerManager = player;
         }
-
+        // Optional later implementation for start game setup
         public void StartGame()
         {
             Console.WriteLine("Game started!");
-            Console.WriteLine("Please enter the name(s) of the player(s)");
-            while (true)
-            {
-                string? input = Console.ReadLine();
-                Player player = new Player { Name = input};
-
-                if (!string.IsNullOrWhiteSpace(input))
-                {
-                    if (input.ToLower() == "done")
-                    {
-                        break;
-                    }
-                    if (!playerCards.ContainsKey(player))
-                    {
-                        playerCards[player] = new List<Card>();
-                        Console.WriteLine($"Player {input} added. Enter another name or type 'done' to finish.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("This player name already exists. Please enter a different name, or type 'done' to finish");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input. Please enter a valid player name or type 'done' to finish.");
-                }
-            }
-
         }
 
+        // Optional later implementation for end game cleanup or other things
         public void EndGame()
         {
             Console.WriteLine("Game ended!");
+            
+            AnnounceResults();
+        }
+        // Optional later implementation for handling game draw in different scenarios
+        public void GameDraw()
+        {
+            Console.WriteLine("Game draw");
+
+            AnnounceResults();
         }
 
-        public bool UpdateScore(Player player, Card card)
+        /// <summary>
+        /// Announces the results of the game, including player scores, outcomes, and final rankings.
+        /// </summary>
+        /// <remarks>This method retrieves the dealer's score and calculates the results for all players
+        /// based on their scores. It then displays the results for each player, indicating whether they have busted or
+        /// their final outcome. Finally, it announces the overall rankings, including the dealer, sorted by
+        /// score.</remarks>
+        public void AnnounceResults()
         {
-            if (!playerCards.ContainsKey(player))
+            int dealerScore = dealerManager.GetScore();
+
+            // Sorting players by their scores
+            var playerResults = ScoreHelper.GetPlayerResults(playerManager.Players, dealerScore, playerManager.GetPlayerScore);
+
+            // Announce player results
+            Console.WriteLine("\n--- Player Results ---");
+            foreach (var pr in playerResults)
             {
-                playerCards[player] = new List<Card>();
+                if (pr.Score > 21)
+                    Console.WriteLine($"{pr.Player.Name} busted with {pr.Score} points.");
+                else
+                    Console.WriteLine($"{pr.Player.Name}: {pr.Score} points - {pr.Result}");
             }
+            
+            // Sorting Final ranking (including dealer)
+            var allResults = ScoreHelper.GetFinalRankings(playerResults, dealerScore);
 
-            HGameMaster.HandleAceValue(player, card, playerCards);
+            // Announce final rankings
+            Console.WriteLine("\n--- Final Rankings ---");
+            for (int i = 0; i < allResults.Count; i++)
+            {
+                var place = i + 1;
+                if (allResults[i].Score > 21)
+                    Console.WriteLine($"{place}. {allResults[i].Name} - Busted");
+                else
+                    Console.WriteLine($"{place}. {allResults[i].Name} - {allResults[i].Score} points");
+            }
+        }
 
-            playerCards[player].Add(card);
-            int playerNewSum = playerCards[player].Sum(c => c.Value);
-            int totalScore = playerNewSum;
-
-            Console.WriteLine($"{player} now has {totalScore} point{(totalScore == 1 ? "" : "s")}!\n");
-
-            return HGameMaster.CheckForBust(player, totalScore);
-        } 
     }
 }

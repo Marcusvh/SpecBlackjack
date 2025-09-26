@@ -2,9 +2,9 @@
 
 namespace Blackjack.Helpers
 {
-    public class HDeck
+    public static class DeckHelper
     {
-        public int GetCardValue(Card.CardRanks rank)
+        public static int GetCardValue(Card.CardRanks rank)
         {
             return rank switch
             {
@@ -25,7 +25,7 @@ namespace Blackjack.Helpers
             };
         }
 
-        public void ShuffleDeck(List<Card> deck, Random random)
+        public static void ShuffleDeck(List<Card> deck, Random random)
         {
             int n = deck.Count;
             for (int i = n - 1; i > 0; i--)

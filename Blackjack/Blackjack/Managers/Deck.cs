@@ -7,10 +7,9 @@ namespace Blackjack.Managers
     {
         private int NumberOfDecks = 1;
         Random random = new();
-        HDeck hDeck = new HDeck();
         List<Card> deck = new List<Card>();
         /// <summary>
-        /// Initializes a new instance of the <see cref="Deck"/> class with the specified size.
+        /// Initializes a new instance of the <see cref="Deck"/> class with the specified deck size.
         /// </summary>
         /// <param name="numberOfDecks">The number of decks, to be in play. The default value is 1.</param>
         public Deck(int numberOfDecks = 1) 
@@ -18,6 +17,13 @@ namespace Blackjack.Managers
             NumberOfDecks = numberOfDecks;
         }
 
+        /// <summary>
+        /// Generates and returns a shuffled deck of cards.
+        /// </summary>
+        /// <remarks>The method creates a deck containing the specified number of decks, as determined by
+        /// the  <see cref="NumberOfDecks"/> property. Each deck includes four cards for each rank, regardless of suits.
+        /// The resulting deck is shuffled before being returned.</remarks>
+        /// <returns>A <see cref="List{Card}"/> of <see cref="Card"/> objects representing the shuffled deck of cards.</returns>
         public List<Card> GetDeckOfCards()
         {
             int id = 1;
@@ -32,14 +38,14 @@ namespace Blackjack.Managers
                         {
                             Id = id++,
                             Rank = rank,
-                            Value = hDeck.GetCardValue(rank),
+                            Value = DeckHelper.GetCardValue(rank),
                             IsAce = rank == Card.CardRanks.Ace
                         });
                     }
                 }
             }
 
-            hDeck.ShuffleDeck(deck, random);
+            DeckHelper.ShuffleDeck(deck, random);
             return deck;
         }
         public Card DealCards(string player)
@@ -48,7 +54,7 @@ namespace Blackjack.Managers
             int cardIndex = random.Next(0, deck.Count * NumberOfDecks);
 
             dealtCard = deck[cardIndex];
-            deck.RemoveAt(cardIndex);
+            deck.RemoveAt(cardIndex); // Removes the dealt card from the deck to prevent re-dealing
 
             Console.WriteLine($"{dealtCard.Rank} has been dealt to {player}");
             return dealtCard;

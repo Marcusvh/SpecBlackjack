@@ -1,32 +1,32 @@
 ﻿using Blackjack.models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blackjack.Helpers
 {
-    public class HGameMaster
+    public static class GameMasterHelper
     {
-        public bool CheckForBust(Player player, int totalScore)
+        public static bool CheckForBust(int totalScore)
         {
             bool isBusted = false;
             if (totalScore > 21)
             {
-                Console.WriteLine($"{player.Name} has busted!");
                 isBusted = true;
             }
             return isBusted;
         }
-        public void CheckForBlackjack(string player, int totalScore)
-        {
-            if (totalScore == 21)
-            {
-                Console.WriteLine($"{player} has hit blackjack!");
-            }
-        }
-        public void HandleAceValue(Player player, Card card, Dictionary<Player, List<Card>> playerCards)
+        
+        /// <summary>
+        /// Handles the value assignment for an Ace card dealt to a player, ensuring the value is set correctly
+        /// based on the player's current hand total and their input.
+        /// </summary>
+        /// <remarks>If assigning the Ace a value of 11 would cause the player's hand total to exceed 21,
+        /// the Ace's value is automatically set to 1. Otherwise, the player is prompted to choose whether the Ace
+        /// should count as 1 or 11 points.</remarks>
+        /// <param name="player">The player who is receiving the Ace card.</param>
+        /// <param name="card">The Ace card being dealt to the player. The card's value will be updated based on the player's choice or
+        /// automatic rules.</param>
+        /// <param name="playerCards">A dictionary containing the current cards held by each player, where the key is the player and the value is
+        /// their list of cards.</param>
+        public static void HandleAceValue(Player player, Card card, Dictionary<Player, List<Card>> playerCards)
         {
             int playerCurrentSum = playerCards[player].Sum(c => c.Value);
             if (card.IsAce && playerCurrentSum + 11 > 21)
